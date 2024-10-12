@@ -67,4 +67,17 @@ public class EmailService {
 
         mailSender.send(mimeMessage);
     }
+
+    public void passwordChanged(String email) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);  // Set the recipient email
+            message.setSubject("Password Changed Alert");  // Set the email subject
+            message.setText("Your password has been changed successfully.");  // Set the email content
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.out.println("Failed to send password change notification email: " + e.getMessage());
+        }
+    }
+
 }

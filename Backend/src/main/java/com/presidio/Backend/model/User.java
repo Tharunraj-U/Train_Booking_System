@@ -24,6 +24,7 @@ public class User  extends SuperClass{
     private String password;
     
     private String email;
+    private  String mobileNumber;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(

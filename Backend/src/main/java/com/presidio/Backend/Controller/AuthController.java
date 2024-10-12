@@ -2,6 +2,7 @@ package com.presidio.Backend.Controller;
 
 import com.presidio.Backend.Auth.JwtProvider;
 import com.presidio.Backend.Repo.UserRepository;
+import com.presidio.Backend.Response.Password;
 import com.presidio.Backend.Services.AuthResponse;
 import com.presidio.Backend.Services.CustomerUserDetailsService;
 import com.presidio.Backend.Services.EmailService;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -91,6 +93,28 @@ public class AuthController {
     }
 
 
+    @PutMapping("/updatePassword")
+    public  ResponseEntity<String> changePassword(@RequestBody Password password){
+        if(password.pass1().equals(password.pass2())){
+            Optional<User> user=userRepository.findByEmail(password.email());
+            if(user.isPresent()){
+                user.get().setPassword(password.pass1());
+                userRepository.save(user.get());
+                try {
+                    emailService.passwordChanged(password.email());
+                }catch (Exception e){
+                    throw  new RuntimeException(e);
+                }
+                return new ResponseEntity<>("Password updated successfully."+password.pass1(),HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>("User Not Found ",HttpStatus.NOT_FOUND);
+            }
+        }
+        return new ResponseEntity<>("Passwords do not match.", HttpStatus.BAD_REQUEST);
+    }
+
+
 
 
 
@@ -107,4 +131,6 @@ public class AuthController {
 
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
+
+
 }
