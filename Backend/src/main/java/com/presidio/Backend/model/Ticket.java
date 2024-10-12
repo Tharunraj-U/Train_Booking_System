@@ -1,5 +1,7 @@
 package com.presidio.Backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -24,10 +26,11 @@ public class Ticket extends SuperClass {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;    // Reference to User
+    @JsonBackReference
+    private User user;
+    // Reference to User
 
     private int seatNumber;  // Seat number booked by the user
-
     private LocalDateTime bookingDate;  // Date when the ticket was booked
 
     private String destination;  // Destination of the journey

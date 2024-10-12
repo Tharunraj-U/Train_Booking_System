@@ -94,7 +94,7 @@ public class AuthController {
 
 
 
-//    for the authentication service method
+    //    for the authentication service method
     private Authentication authenticate(String username, String password) {
         UserDetails userDetails = customerUserDetailsService.loadUserByUsername(username);
         if (userDetails == null) {
