@@ -22,8 +22,6 @@ const Signup = ({ setIsAuthenticated }) => {
 
       localStorage.setItem("token", response.data.jwt);
       setIsAuthenticated(true);
-
-      // Navigate to home and refresh the page
       navigate("/home");
       window.location.reload();
     } catch (e) {

@@ -16,7 +16,8 @@ const SignIn = ({setIsAuthenticated}) => {
        const response=await    authservice.signIn({email,password})
        console.log(response.data.jwt);
        localStorage.setItem("token",response.data.jwt);
-       setIsAuthenticated(true)
+       const token=localStorage.getItem("token");
+       setIsAuthenticated(!!token)
        navigator("/home")
        window.location.reload();
       }catch(e){
@@ -59,7 +60,7 @@ const SignIn = ({setIsAuthenticated}) => {
 
           <div className='mb-4'>
           <label className='block text-gray-900' >Email</label>
-          <input type='email' value={email} onChange={(e)=>setEmail(e.target.value)} required 
+          <input  id="email" type='email' value={email} onChange={(e)=>setEmail(e.target.value)} required 
           className='w-full  block p-2 border border-gray-400   shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500"rounded mt-1 focus:ring-2 focus:ring-blue-500' placeholder="Enter your email">
             
           </input>

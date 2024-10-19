@@ -6,6 +6,7 @@ import axios from 'axios';
 const ForgetPassword = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
+  const [saveOtp,setSaveOtp]=useState('')
   const [pass1, setPass1] = useState('');
   const [pass2, setPass2] = useState('');
   const [otpSent, setOtpSent] = useState(false);
@@ -18,7 +19,8 @@ const ForgetPassword = ({ setIsAuthenticated }) => {
       const response = await axios.post('http://localhost:8080/auth/otp', { email });
       console.log(response.data);
       setOtpSent(true);
-      // Notify user that OTP was sent
+      setSaveOtp(response.data)
+      
     } catch (e) {
       console.error(e.response);
     }
@@ -26,13 +28,12 @@ const ForgetPassword = ({ setIsAuthenticated }) => {
 
   const handleOtpVerify = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:8080/auth/verify-otp', { email, otp });
-      console.log(response.data);
-      setOtpVerified(true);
-      // Notify user that OTP was verified
-    } catch (e) {
-      console.error(e.response);
+    console.log(saveOtp,otp)
+    if(saveOtp == otp){
+      setOtpVerified(true)
+
+    } else{
+      console.error("OTP Not match");
     }
   };
 
@@ -43,15 +44,14 @@ const ForgetPassword = ({ setIsAuthenticated }) => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:8080/auth/reset-password', {
+      const response = await axios.put('http://localhost:8080/auth/updatePassword', {
         email,
         password: pass1,
       });
       console.log(response);
-      localStorage.setItem('token', response.data.jwt);
-      setIsAuthenticated(true);
-      redirect('/home');
-      window.location.reload();
+      
+      redirect('/signin');
+      // window.location.reload();
     } catch (e) {
       console.error(e.response);
     }
@@ -160,11 +160,7 @@ const ForgetPassword = ({ setIsAuthenticated }) => {
             </form>
           </>
         )}
-        <div className="text-center mt-4">
-          <Link to="/forget" className="text-sm text-purple-600 hover:text-purple-800">
-            Forgot Password?
-          </Link>
-        </div>
+        
       </motion.div>
     </div>
   );

@@ -25,6 +25,7 @@ function App() {
         <Route path="/trainlist" element={isAuthenticated ? <TrainList /> : <SignIn setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/booking" element={isAuthenticated ? <BookingForm /> : <SignIn setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/payment" element={isAuthenticated ? <Payment /> : <SignIn setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path='/signin' element={<SignIn setIsAuthenticated={setIsAuthenticated}/>} />
         <Route path="/signup" element={isAuthenticated ? <Home /> : <Signup setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/forget" element={isAuthenticated ? <Home /> : <ForgetPassword />} />
         <Route path="*" element={<NotFound />} />

@@ -3,10 +3,7 @@ package com.presidio.Backend.Controller;
 import com.presidio.Backend.Auth.JwtProvider;
 import com.presidio.Backend.Repo.UserRepository;
 import com.presidio.Backend.Response.Password;
-import com.presidio.Backend.Services.AuthResponse;
-import com.presidio.Backend.Services.CustomerUserDetailsService;
-import com.presidio.Backend.Services.EmailService;
-import com.presidio.Backend.Services.LoginRequest;
+import com.presidio.Backend.Services.*;
 import com.presidio.Backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +31,9 @@ public class AuthController {
 
     @Autowired
     private JwtProvider jwtProvider;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private CustomerUserDetailsService customerUserDetailsService;
@@ -92,27 +92,33 @@ public class AuthController {
         return new ResponseEntity<>(authResponse, HttpStatus.OK);
     }
 
+    @PostMapping("/otp")
+    public  ResponseEntity<String> otpGenreate(@RequestBody Password email) throws Exception {
+        Optional<User> user = userRepository.findByEmail(email.email());
+        if (!user.isPresent()) {
+            return new ResponseEntity<>("User Not Found ", HttpStatus.NOT_FOUND);
+        }
+
+        String otp=userService.generateTheOtp();
+        emailService.sendOtp(otp,email.email());
+        return new ResponseEntity<>(otp,HttpStatus.ACCEPTED);
+    }
+
 
     @PutMapping("/updatePassword")
-    public  ResponseEntity<String> changePassword(@RequestBody Password password){
-        if(password.pass1().equals(password.pass2())){
-            Optional<User> user=userRepository.findByEmail(password.email());
-            if(user.isPresent()){
-                user.get().setPassword(password.pass1());
-                userRepository.save(user.get());
-                try {
-                    emailService.passwordChanged(password.email());
-                }catch (Exception e){
-                    throw  new RuntimeException(e);
-                }
-                return new ResponseEntity<>("Password updated successfully."+password.pass1(),HttpStatus.OK);
-            }
-            else {
-                return new ResponseEntity<>("User Not Found ",HttpStatus.NOT_FOUND);
-            }
+    public  ResponseEntity<String> changePassword(@RequestBody Password password) {
+
+        Optional<User> user = userRepository.findByEmail(password.email());
+        if (user.isPresent()) {
+            user.get().setPassword(passwordEncoder.encode(password.password()));
+            userRepository.save(user.get());
+            return new ResponseEntity<>("Password updated successfully." + password.password(), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Passwords do not match.", HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>("User Not Found ", HttpStatus.NOT_FOUND);
     }
+
+
 
 
 

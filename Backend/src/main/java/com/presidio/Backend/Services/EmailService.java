@@ -80,4 +80,11 @@ public class EmailService {
         }
     }
 
+    public void sendOtp(String otp, String email) throws  Exception{
+        SimpleMailMessage message=new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("OTP");
+        message.setText(otp);
+        mailSender.send(message);
+    }
 }

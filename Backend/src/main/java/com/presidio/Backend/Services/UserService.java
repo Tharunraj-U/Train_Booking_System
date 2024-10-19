@@ -22,4 +22,9 @@ public class UserService {
     public User updateUser(User user) {
         return userRepository.save(user);
     }
+
+    public String generateTheOtp() {
+        int otp=(int)((Math.random()*9000)+1000);
+        return  otp+"";
+    }
 }
